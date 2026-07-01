@@ -1,6 +1,12 @@
-# MeetOnMemory
-
 <div align="center">
+
+<h1 align="center">🧠 MeetOnMemory</h1>
+
+![GitHub stars](https://img.shields.io/github/stars/imuniqueshiv/MeetOnMemory?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/imuniqueshiv/MeetOnMemory?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/imuniqueshiv/MeetOnMemory?style=for-the-badge)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/imuniqueshiv/MeetOnMemory?style=for-the-badge)
+![License](https://img.shields.io/github/license/imuniqueshiv/MeetOnMemory?style=for-the-badge)
 
 ### AI-Powered Meeting Memory & Management Platform
 
@@ -14,6 +20,7 @@ Transform meetings, discussions, and organizational knowledge into a searchable 
 ![Gemini](https://img.shields.io/badge/Google-Gemini-blue)
 
 </div>
+
 
 ---
 
@@ -398,18 +405,46 @@ This project is licensed under the MIT License.
 
 ---
 
-# Support
+# ⭐ Support
 
-If you find this project useful:
+If you find **MeetOnMemory** useful, please consider:
 
-⭐ Star the repository
+⭐ Star this repository
 
 🍴 Fork the project
 
-🐛 Report issues
+🐛 Report bugs
 
-🤝 Contribute improvements
+💡 Suggest new features
+
+🤝 Contribute to the project
 
 ---
 
-Built with React, Node.js, MongoDB, and AI.
+<p align="center">
+  <b>Built with passion, powered by AI, shipped with precision.</b>
+</p>
+
+<p align="center">
+  ⭐ If MeetOnMemory helps you, consider giving this repository a star! ⭐
+</p>
+
+<p align="center">
+  <b>Proud participant of Elite Coders Summer of Code (ECSoC) 2026.</b>
+</p>
+
+---
+
+# 💖 Contributors
+
+Thanks to all the amazing contributors who have helped improve MeetOnMemory!
+
+<a href="https://github.com/imuniqueshiv/MeetOnMemory/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=imuniqueshiv/MeetOnMemory" />
+</a>
+
+---
+
+<p align="center">
+Made with ❤️ by the MeetOnMemory Community
+</p>
