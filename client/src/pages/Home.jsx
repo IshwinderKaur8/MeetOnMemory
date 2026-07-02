@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import HowItWorks from "../components/HowItWorks";
 import About from "../components/About";
+import FAQ from "../components/FAQ";
 
 const Home = () => {
   return (
@@ -18,6 +19,8 @@ const Home = () => {
       {/* How It Works Section */}
       <HowItWorks />
       <About />
+
+      <FAQ/>
     </div>
   );
 };

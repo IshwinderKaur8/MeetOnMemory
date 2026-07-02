@@ -385,17 +385,19 @@ Track decisions, action items, and organizational growth.
 
 ---
 
-# Contributors
+# 💖 Contributors
 
-### Shiv Raj Singh
+Thanks to all the amazing contributors who have helped improve MeetOnMemory!
 
-B.Tech – Artificial Intelligence & Machine Learning
-
-GitHub:
-https://github.com/imuniqueshiv
-
-LinkedIn:
-https://www.linkedin.com/in/shiv-raj-singh-387973299/
+<div align="center">
+  <a href="https://github.com/imuniqueshiv/MeetOnMemory/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=imuniqueshiv/MeetOnMemory&max=100" alt="MeetOnMemory contributors" />
+  </a>
+  <br />
+  <a href="https://github.com/imuniqueshiv/MeetOnMemory/graphs/contributors">
+    View all contributors
+  </a>
+</div>
 
 ---
 
@@ -432,16 +434,6 @@ If you find **MeetOnMemory** useful, please consider:
 <p align="center">
   <b>Proud participant of Elite Coders Summer of Code (ECSoC) 2026.</b>
 </p>
-
----
-
-# 💖 Contributors
-
-Thanks to all the amazing contributors who have helped improve MeetOnMemory!
-
-<a href="https://github.com/imuniqueshiv/MeetOnMemory/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=imuniqueshiv/MeetOnMemory" />
-</a>
 
 ---
 
