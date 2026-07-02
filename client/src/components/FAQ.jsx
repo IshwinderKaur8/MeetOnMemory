@@ -5,7 +5,7 @@ const faqs = [
     {
         question: "Is MeetOnMemory free?",
         answer:
-          "MeetOnMemory is currently under active development.During this phase, core feature are available for testing. Pricing plans will be introduced as the platform matures.",
+          "MeetOnMemory is currently under active development. During this phase, core feature are available for testing. Pricing plans will be introduced as the platform matures.",
     },
     {
         question: "Which AI model is used?",
