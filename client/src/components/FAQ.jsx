@@ -13,9 +13,9 @@ const faqs = [
             "MeetOnMemory leverages modern AI models such as Google Gemini for meeting summarization and knowledge extraction. Additional AI services may be integrated as the platform evolves.",
     },
     {
-        question: "Can I upload meeting recordings ?",
+        question: "Can I upload meeting recordings?",
         answer: 
-           "Yes, You can upload meeting recordings, transcripts, and supporting documents. The platform processes them to generate summaries, ectarct key decisions, and build searchable origanizational knowledge.",
+           "Yes, You can upload meeting recordings, transcripts, and supporting documents. The platform processes them to generate summaries, extarct key decisions, and build searchable organizational knowledge.",
     },    
     {
         question: "How secure is my data?",
