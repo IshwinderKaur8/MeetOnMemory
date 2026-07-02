@@ -27,10 +27,11 @@ import MeetingRoom from "./pages/MeetingRoom.jsx";
 
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Footer from "./components/Footer.jsx";
 
 const App = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
@@ -139,7 +140,10 @@ const App = () => {
         {/* ✅ Fallback route — send unknown routes to Home */}
         <Route path="*" element={<Home />} />
       </Routes>
-    </>
+      
+      {/* Global Footer */}
+      <Footer />
+    </div>
   );
 };
 
