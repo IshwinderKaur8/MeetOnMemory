@@ -93,7 +93,7 @@ const ResetPassword = () => {
     }
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-200 to-purple-400 overflow-hidden px-4 sm:px-6">
+        <div className="relative flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400 overflow-hidden px-4 sm:px-6">
             {/* Logo */}
             <img
                 onClick={() => navigate('/')}
@@ -143,7 +143,7 @@ const ResetPassword = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 px-4 rounded-xl cursor-pointer bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:translate-y-[-2px] active:translate-y-0 active:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                            className="w-full py-3 px-4 rounded-xl cursor-pointer bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
                         >
                             {isLoading ? (
                                 <>
@@ -220,7 +220,7 @@ const ResetPassword = () => {
                         <button
                             type="submit"
                             onSubmit={onSubmitOTP}
-                            className="w-full py-3 px-4  cursor-pointer rounded-xl bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:translate-y-[-2px] active:translate-y-0 active:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
+                            className="w-full py-3 px-4  cursor-pointer rounded-xl bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
                         >
                             Verify Code
                         </button>
@@ -282,7 +282,7 @@ const ResetPassword = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 px-4 cursor-pointer rounded-xl bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:translate-y-[-2px] active:translate-y-0 active:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                            className="w-full py-3 px-4 cursor-pointer rounded-xl bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
                         >
                             {isLoading ? (
                                 <>
