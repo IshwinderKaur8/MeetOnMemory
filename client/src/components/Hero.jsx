@@ -2,10 +2,25 @@ import React from 'react';
 import { FaArrowRight, FaPlay, FaRobot, FaSearch, FaFileAlt, FaBuilding } from 'react-icons/fa';
 
 const Hero = () => {
+  // Handle CTA button clicks
+  const handleGetStarted = () => {
+    // Navigate to signup or dashboard
+    window.location.href = '/signup';
+    // Or if using React Router:
+    // navigate('/signup');
+  };
+
+  const handleLearnMore = () => {
+    // Scroll to features section or navigate to about
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    // Or if using React Router:
+    // navigate('/about');
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-purple-50">
+      {/* Background decorative elements - hidden from screen readers */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {/* Blob 1 */}
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         {/* Blob 2 */}
@@ -20,7 +35,7 @@ const Hero = () => {
           <div className="text-center lg:text-left">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
@@ -30,7 +45,7 @@ const Hero = () => {
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Never Lose{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Meeting Knowledge
               </span>{' '}
               Again
@@ -43,13 +58,21 @@ const Hero = () => {
               conversation count.
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Now with functionality */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+              <button 
+                onClick={handleGetStarted}
+                className="group px-8 py-4 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                aria-label="Get Started with MeetOnMemory"
+              >
                 Get Started
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="px-8 py-4 bg-white text-gray-700 rounded-xl font-semibold border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+              <button 
+                onClick={handleLearnMore}
+                className="px-8 py-4 bg-white text-gray-700 rounded-xl font-semibold border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                aria-label="Learn more about MeetOnMemory"
+              >
                 <FaPlay className="text-blue-600" />
                 Learn More
               </button>
@@ -77,7 +100,7 @@ const Hero = () => {
           </div>
 
           {/* Right - Illustration/Visual */}
-          <div className="relative flex justify-center items-center">
+          <div className="relative flex justify-center items-center" aria-hidden="true">
             <div className="relative w-full max-w-md">
               {/* Dashboard Mockup */}
               <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
@@ -124,8 +147,8 @@ const Hero = () => {
               </div>
 
               {/* Floating decorative elements */}
-              <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-400 rounded-2xl opacity-20 blur-2xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl opacity-20 blur-2xl"></div>
+              <div className="absolute -top-4 -right-4 w-20 h-20 bg-linear-to-br from-blue-400 to-purple-400 rounded-2xl opacity-20 blur-2xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-linear-to-br from-purple-400 to-pink-400 rounded-2xl opacity-20 blur-2xl"></div>
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ const Home = () => {
       {/* Fixed Navbar */}
       <Navbar />
 
-      {/* Main content (Header + Hero) */}
+      {/* Main content (Hero) */}
       <div className="flex flex-col items-center justify-center min-h-screen pt-32 pb-20 text-center">
           <Hero />
       </div>
