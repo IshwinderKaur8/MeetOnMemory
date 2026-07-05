@@ -221,11 +221,8 @@ const Navbar = () => {
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && navigate("/")}
           >
-            <div className="relative flex items-center justify-center">
-              {/* Restored Glowing Background Shadow Effect */}
-              <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 opacity-25 blur-md group-hover:opacity-45 transition duration-300"></div>
-              
-              {/* Extra Large Native Option A Infinity Symbol */}
+            <div className="flex items-center justify-center">
+              {/* Clean Extra Large Native Option A Infinity Symbol with scale only */}
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="relative w-16 h-16 transition-transform duration-300 group-hover:scale-105">
                 <defs>
                   <linearGradient id="navInfinityGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -239,11 +236,11 @@ const Navbar = () => {
                 <circle cx="75" cy="50" r="6.5" fill="#7c3aed" />
               </svg>
             </div>
-            <span className="font-bold text-2xl text-gray-900 tracking-tight transition-all duration-300">
+            {/* Clean, Consistent Text Layout (Hover effects removed) */}
+            <span className="font-bold text-2xl text-gray-900 tracking-tight">
               MeetOn<span className="text-blue-600">Memory</span>
             </span>
           </div>
-
           {/* Desktop Navigation */}
           {userData ? (
             /* Logged In Desktop App Nav */
