@@ -1,0 +1,19 @@
+# Dependency directories
+node_modules/
+
+# Build directories
+dist/
+build/
+
+# Local config & credentials
+config/*.json
+credentials.json
+
+# Local database/temporary files
+server/uploads/
+logs/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
