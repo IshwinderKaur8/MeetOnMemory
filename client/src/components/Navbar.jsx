@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import AppContent from "../context/AppContent";
-import { assets } from "../assets/assets";
 import {
   Menu,
   X,
