@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,17 +24,22 @@ import Reports from "./pages/Reports.jsx";
 import AiSearch from "./pages/AiSearch.jsx";
 import MeetingRoom from "./pages/MeetingRoom.jsx";
 
-
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Footer from "./components/Footer.jsx";
 
 const App = () => {
- const [isHovered, setIsHovered] = useState(false);
+  const location = useLocation();
+
+  const hideFooterRoutes = ["/login"];
+
+  const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
+
+  const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(pointer: fine)');
+    const mediaQuery = window.matchMedia("(pointer: fine)");
     setIsMobile(!mediaQuery.matches);
     if (!mediaQuery.matches) return;
 
@@ -56,11 +61,11 @@ const App = () => {
     const handleMouseOver = (e) => {
       const target = e.target;
       if (
-        target.tagName === 'A' || 
-        target.tagName === 'BUTTON' || 
-        target.closest('button') || 
-        target.closest('a') ||
-        target.getAttribute('role') === 'button'
+        target.tagName === "A" ||
+        target.tagName === "BUTTON" ||
+        target.closest("button") ||
+        target.closest("a") ||
+        target.getAttribute("role") === "button"
       ) {
         setIsHovered(true);
       } else {
@@ -70,8 +75,8 @@ const App = () => {
 
     // The Tick function handles the fluid physics loop
     const tick = () => {
-      if (!dotEl) dotEl = document.querySelector('.custom-cursor');
-      if (!ringEl) ringEl = document.querySelector('.custom-cursor-ring');
+      if (!dotEl) dotEl = document.querySelector(".custom-cursor");
+      if (!ringEl) ringEl = document.querySelector(".custom-cursor-ring");
 
       if (dotEl && ringEl) {
         // Inner dot follows instantly (1:1 ratio)
@@ -88,16 +93,17 @@ const App = () => {
       animationFrameId = requestAnimationFrame(tick);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseover", handleMouseOver);
     animationFrameId = requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseover", handleMouseOver);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Toast Notifications */}
@@ -202,19 +208,18 @@ const App = () => {
           }
         />
 
-      <Route path="/meeting-room" element={<MeetingRoom />} />
-
+        <Route path="/meeting-room" element={<MeetingRoom />} />
 
         {/* ✅ Fallback route — send unknown routes to Home */}
         <Route path="*" element={<Home />} />
       </Routes>
-      
       {/* Global Footer */}
-      <Footer />
-     {!isMobile && (
+      {shouldShowFooter && <Footer />}
+
+      {!isMobile && (
         <>
-          <div className={`custom-cursor ${isHovered ? 'hovered' : ''}`} />
-          <div className={`custom-cursor-ring ${isHovered ? 'hovered' : ''}`} />
+          <div className={`custom-cursor ${isHovered ? "hovered" : ""}`} />
+          <div className={`custom-cursor-ring ${isHovered ? "hovered" : ""}`} />
         </>
       )}
     </div>
