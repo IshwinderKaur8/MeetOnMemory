@@ -30,7 +30,7 @@ const NAV_LINKS = [
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { backendUrl, userData, setUserData } = useContext(AppContent);
+  const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -147,7 +147,7 @@ const Navbar = () => {
     } finally {
       setUserData(null);
       localStorage.removeItem("userData");
-
+      setIsLoggedin(false);
       toast.success("Logged out successfully");
 
       navigate("/");
