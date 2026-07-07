@@ -7,6 +7,8 @@ import {
   uploadAudioForMeeting,   // NEW: Upload audio for existing meeting
   summarizeMeeting,        // EXISTING: Generate AI summary/MOM
   getAllMeetings,
+  getMeetingById,          // NEW: Get single meeting details
+  updateMeeting,           // NEW: Update meeting (rename)
   deleteMeeting,           // EXISTING: Delete meeting
   searchMeetingsByText     // 🆕 NEW: Voice/Text Search
 } from "../controllers/meetingController.js";
@@ -24,6 +26,12 @@ router.post("/summarize", userAuth, summarizeMeeting);
 
 // ✅ Fetch All Meetings (for Summaries Page)
 router.get("/all", userAuth, getAllMeetings);
+
+// ✅ Get Single Meeting Details (for Meeting Details Page)
+router.get("/:id", userAuth, getMeetingById);
+
+// ✅ Update Meeting (for Meeting Details Page - rename)
+router.patch("/:id", userAuth, updateMeeting);
 
 // ✅ Delete Meeting
 router.delete("/delete/:id", userAuth, deleteMeeting);

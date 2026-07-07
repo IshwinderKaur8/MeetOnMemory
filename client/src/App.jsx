@@ -23,6 +23,7 @@ import Summaries from "./pages/Summaries.jsx";
 import Reports from "./pages/Reports.jsx";
 import AiSearch from "./pages/AiSearch.jsx";
 import MeetingRoom from "./pages/MeetingRoom.jsx";
+import MeetingDetails from "./pages/MeetingDetails.jsx";
 
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -209,6 +210,15 @@ const App = () => {
         />
 
         <Route path="/meeting-room" element={<MeetingRoom />} />
+
+        <Route
+          path="/meeting/:id"
+          element={
+            <ProtectedRoute>
+              <MeetingDetails />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ✅ Fallback route — send unknown routes to Home */}
         <Route path="*" element={<Home />} />

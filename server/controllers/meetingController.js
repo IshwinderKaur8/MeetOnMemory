@@ -610,6 +610,69 @@ export const deleteMeeting = async (req, res) => {
 };
 
 /* =========================================================
+   7. GET MEETING BY ID (Meeting Details Page)
+   - Fetches a single meeting with all details
+   - Used by: MeetingDetails.jsx
+   ========================================================= */
+export const getMeetingById = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const meeting = await Meeting.findOne({
+      _id: req.params.id,
+      uploadedBy: userId,
+    });
+
+    if (!meeting) {
+      return res.status(404).json({ success: false, message: "Meeting not found" });
+    }
+
+    return res.status(200).json({ success: true, meeting });
+  } catch (error) {
+    console.error("❌ getMeetingById Error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to fetch meeting" });
+  }
+};
+
+/* =========================================================
+   8. UPDATE MEETING (Rename)
+   - Updates meeting title or other fields
+   - Used by: MeetingDetails.jsx
+   ========================================================= */
+export const updateMeeting = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const meeting = await Meeting.findOne({
+      _id: req.params.id,
+      uploadedBy: userId,
+    });
+
+    if (!meeting) {
+      return res.status(404).json({ success: false, message: "Meeting not found" });
+    }
+
+    const { title } = req.body;
+    if (title) {
+      meeting.title = title.trim();
+    }
+
+    await meeting.save();
+
+    return res.status(200).json({ success: true, message: "Meeting updated successfully", meeting });
+  } catch (error) {
+    console.error("❌ updateMeeting Error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to update meeting" });
+  }
+};
+
+/* =========================================================
    6. NEW: VOICE/TEXT SEARCH (searchMeetingsByText)
    - Accepts either:
        { query: "text to search" }
