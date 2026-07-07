@@ -76,43 +76,36 @@ jobs:
               const UNCLAIM_COMMAND = "/unclaim";
 
               const BOT_MESSAGES = {
-                invalidClaim: (user) => `👋 Thanks for your interest, @${user}!
+                invalidClaim: (user) => 
+                  `👋 Thanks for your interest, @${user}!\n\n` +
+                  `To claim this issue, please comment:\n\n` +
+                  `\`${CLAIM_COMMAND}\`\n\n` +
+                  `Only the first valid \`${CLAIM_COMMAND}\` comment is eligible for automatic assignment.`,
 
-To claim this issue, please comment:
+                assigned: (user) => 
+                  `🎉 Issue Assigned\n\n` +
+                  `Welcome @${user}!\n\n` +
+                  `This issue has been assigned to you following our first-come, first-served policy.\n\n` +
+                  `Please submit a Pull Request within 24 hours.\n\n` +
+                  `If you need more time, please update the issue before the deadline.\n\n` +
+                  `Happy coding! 🚀`,
 
-\`${CLAIM_COMMAND}\`
+                alreadyAssigned: (user) => 
+                  `❌ Issue Already Assigned\n\n` +
+                  `This issue is currently assigned to @${user}.\n\n` +
+                  `Please explore other available unassigned issues while waiting for this issue to become available.\n\n` +
+                  `If the current assignee becomes inactive, the issue may be automatically reopened according to the repository's assignment policy.\n\n` +
+                  `Thank you for your interest in contributing! 💙`,
 
-Only the first valid \`${CLAIM_COMMAND}\` comment is eligible for automatic assignment.`,
-
-                assigned: (user) => `🎉 Issue Assigned
-
-Welcome @${user}!
-
-This issue has been assigned to you following our first-come, first-served policy.
-
-Please submit a Pull Request within 24 hours.
-
-If you need more time, please update the issue before the deadline.
-
-Happy coding! 🚀`,
-
-                alreadyAssigned: (user) => `❌ Issue Already Assigned
-
-This issue is currently assigned to @${user}.
-
-Please explore other available unassigned issues while waiting for this issue to become available.
-
-If the current assignee becomes inactive, the issue may be automatically reopened according to the repository's assignment policy.
-
-Thank you for your interest in contributing! 💙`,
-
-                claimRejected: (author) => `❌ This issue was opened by another contributor.
-
-Only the issue author (@${author}) may claim this issue automatically.
-
-Repository maintainers may still assign contributors manually if required.`,
+                claimRejected: (author) => 
+                  `❌ This issue was opened by another contributor.\n\n` +
+                  `Only the issue author (@${author}) may claim this issue automatically.\n\n` +
+                  `Repository maintainers may still assign contributors manually if required.`,
+                
                 alreadyClaimed: (user) => `⚠️ @${user}, you are already assigned to this issue!`,
+                
                 closedIssue: (user) => `❌ Request denied. You cannot claim a closed issue, @${user}.`,
+                
                 limitReached: (user, issuesList) => {
                   let listStr = "";
                   if (issuesList && issuesList.length > 0) {
