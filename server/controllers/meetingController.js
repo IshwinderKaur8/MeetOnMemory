@@ -615,6 +615,11 @@ export const deleteMeeting = async (req, res) => {
    - Used by: MeetingDetails.jsx
    ========================================================= */
 export const getMeetingById = async (req, res) => {
+   7. NEW: UPDATE MEETING (updateMeeting)
+   - Updates meeting fields like title, description, etc.
+   - Used by: MeetingRepository component
+   ========================================================= */
+export const updateMeeting = async (req, res) => {
   try {
     const userId = req.user?.id || req.user?._id;
     if (!userId) {
@@ -626,6 +631,7 @@ export const getMeetingById = async (req, res) => {
       uploadedBy: userId,
     });
 
+    const meeting = await Meeting.findById(req.params.id);
     if (!meeting) {
       return res.status(404).json({ success: false, message: "Meeting not found" });
     }
@@ -666,6 +672,44 @@ export const updateMeeting = async (req, res) => {
     await meeting.save();
 
     return res.status(200).json({ success: true, message: "Meeting updated successfully", meeting });
+    // Check if user owns the meeting
+    if (meeting.uploadedBy.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, message: "You don't have permission to update this meeting" });
+    }
+
+    // Update allowed fields
+    const { title, description, meetingType, date, time, duration, location, venue, tags } = req.body;
+    
+    if (title) meeting.title = title.trim();
+    if (description !== undefined) meeting.description = description;
+    if (meetingType) meeting.meetingType = meetingType;
+    if (date) meeting.date = new Date(date);
+    if (time !== undefined) meeting.time = time;
+    if (duration !== undefined) meeting.duration = duration;
+    if (location !== undefined) meeting.location = location;
+    if (venue !== undefined) meeting.venue = venue;
+    if (tags) meeting.tags = tags;
+
+    await meeting.save();
+
+    // Re-index meeting for search
+    try {
+      await indexMeeting(meeting);
+    } catch (idxErr) {
+      console.error("⚠️ indexMeeting error (continuing):", idxErr.message);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Meeting updated successfully",
+      meeting: {
+        _id: meeting._id,
+        title: meeting.title,
+        description: meeting.description,
+        meetingType: meeting.meetingType,
+        date: meeting.date,
+      }
+    });
   } catch (error) {
     console.error("❌ updateMeeting Error:", error.message);
     return res.status(500).json({ success: false, message: "Failed to update meeting" });
@@ -674,6 +718,7 @@ export const updateMeeting = async (req, res) => {
 
 /* =========================================================
    6. NEW: VOICE/TEXT SEARCH (searchMeetingsByText)
+   8. NEW: VOICE/TEXT SEARCH (searchMeetingsByText)
    - Accepts either:
        { query: "text to search" }
      or

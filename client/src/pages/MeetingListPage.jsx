@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContent from "../context/AppContent";
 import Navbar from "../components/Navbar.jsx";
-import { PlusCircle, Calendar, Video, ClipboardList } from "lucide-react";
+import MeetingRepository from "../components/meetings/MeetingRepository.jsx";
+import { PlusCircle, Calendar } from "lucide-react";
 
 const MeetingListPage = () => {
   const { userData } = useContext(AppContent);
@@ -14,10 +15,10 @@ const MeetingListPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
-      {/* ✅ Navbar */}
+      {/* Navbar */}
       <Navbar />
 
-      {/* ✅ Page Header */}
+      {/* Page Header */}
       <header className="text-center mt-16 mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold">
           Welcome,{" "}
@@ -27,17 +28,17 @@ const MeetingListPage = () => {
           !
         </h1>
         <p className="text-gray-500 mt-2 text-base">
-          Here are your upcoming and past meetings.
+          Browse, search, and manage all your uploaded meetings
         </p>
       </header>
 
-      {/* ✅ Main Section */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6">
+      {/* Main Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
         {/* Top Actions */}
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-500" />
-            Your Meetings
+            Meeting Repository
           </h2>
 
           <button
@@ -49,47 +50,8 @@ const MeetingListPage = () => {
           </button>
         </div>
 
-        {/* ✅ Meetings List */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Placeholder cards (replace with actual meeting data later) */}
-          <div className="bg-white rounded-2xl p-5 shadow hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-3">
-              <Video className="w-6 h-6 text-blue-500" />
-              <h3 className="font-semibold text-lg">AI Strategy Discussion</h3>
-            </div>
-            <p className="text-gray-500 text-sm">
-              Recorded on Oct 28, 2025 • Duration: 45 min
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-3">
-              <ClipboardList className="w-6 h-6 text-purple-500" />
-              <h3 className="font-semibold text-lg">Team Review Meeting</h3>
-            </div>
-            <p className="text-gray-500 text-sm">
-              Recorded on Oct 25, 2025 • Duration: 1 hr
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-3">
-              <Video className="w-6 h-6 text-green-500" />
-              <h3 className="font-semibold text-lg">Faculty Roundtable</h3>
-            </div>
-            <p className="text-gray-500 text-sm">
-              Recorded on Oct 20, 2025 • Duration: 30 min
-            </p>
-          </div>
-        </div>
-
-        {/* ✅ Empty State (optional) */}
-        {/* Uncomment this when dynamic meetings are integrated */}
-        {/* {meetings.length === 0 && (
-          <p className="text-center text-gray-500 mt-12">
-            You have no meetings scheduled. Click “Create New Meeting” to start one!
-          </p>
-        )} */}
+        {/* Meeting Repository Component */}
+        <MeetingRepository />
       </main>
     </div>
   );
