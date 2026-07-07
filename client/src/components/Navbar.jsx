@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import AppContent from "../context/AppContent";
+import { toast } from "react-toastify";
 import {
   Menu,
   X,
@@ -138,12 +139,18 @@ const Navbar = () => {
         {},
         { withCredentials: true },
       );
+    } catch (err) {
+      console.warn(
+        "Backend logout cookie clearance skipped locally:",
+        err.message,
+      );
+    } finally {
       setUserData(null);
       localStorage.removeItem("userData");
-      window.location.href = "/login";
-    } catch (err) {
-      console.error("Logout failed", err);
-      window.location.href = "/login";
+
+      toast.success("Logged out successfully");
+
+      navigate("/");
     }
   };
 
