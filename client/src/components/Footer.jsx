@@ -1,9 +1,11 @@
 import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Github, ArrowUp } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/";
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -16,25 +18,129 @@ const Footer = () => {
     }
   };
 
+  if (!isLandingPage) {
+    return (
+      <footer className="bg-white border-t border-gray-200 py-6 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Left: Brand logo & Copyright */}
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4">
+              <Link to="/" className="flex items-center gap-2 group">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 100 100"
+                  className="w-6 h-6 transition-transform duration-300 group-hover:scale-105"
+                >
+                  <defs>
+                    <linearGradient
+                      id="compactInfinityGrad"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#2563eb" />
+                      <stop offset="100%" stopColor="#7c3aed" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M25,50 C25,35 38,30 50,50 C62,70 75,65 75,50 C75,35 62,30 50,50 C38,70 25,65 25,50 Z"
+                    fill="none"
+                    stroke="url(#compactInfinityGrad)"
+                    strokeWidth="11"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="25" cy="50" r="6.5" fill="#2563eb" />
+                  <circle cx="75" cy="50" r="6.5" fill="#7c3aed" />
+                </svg>
+                <span className="font-bold text-sm text-gray-900 tracking-tight">
+                  MeetOn<span className="text-blue-600">Memory</span>
+                </span>
+              </Link>
+              <span className="hidden sm:inline text-gray-300">|</span>
+              <span className="text-xs text-gray-500">
+                &copy; {currentYear} MeetOnMemory. All rights reserved.
+              </span>
+              <span className="px-2 py-0.5 text-[10px] font-semibold text-gray-500 bg-gray-100 rounded-full">
+                v1.0.0
+              </span>
+            </div>
+
+            {/* Right: Links & Back to Top */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-gray-500">
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                className="hover:text-blue-600 transition-colors duration-200"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                className="hover:text-blue-600 transition-colors duration-200"
+              >
+                Terms of Service
+              </a>
+              <a
+                href="https://github.com/imuniqueshiv/MeetOnMemory"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:text-blue-600 transition-colors duration-200"
+              >
+                <Github className="w-3.5 h-3.5" />
+                GitHub
+              </a>
+              <button
+                onClick={scrollToTop}
+                className="flex items-center gap-1 hover:text-blue-600 transition-colors duration-200 group"
+                aria-label="Scroll back to top"
+              >
+                <ArrowUp className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                Back to top
+              </button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="bg-white border-t border-gray-200 pt-16 pb-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
-
-         {/* Column 1: Project Info */}
+          {/* Column 1: Project Info */}
           <div className="flex flex-col gap-4 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               <div className="flex items-center justify-center">
                 {/* Clean Native Option A Infinity Symbol tuned for Footer Sizing */}
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-10 h-10 transition-transform duration-300">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 100 100"
+                  className="w-10 h-10 transition-transform duration-300"
+                >
                   <defs>
-                    <linearGradient id="footerInfinityGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient
+                      id="footerInfinityGrad"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
                       <stop offset="0%" stop-color="#2563eb" />
                       <stop offset="100%" stop-color="#7c3aed" />
                     </linearGradient>
                   </defs>
-                  <path d="M25,50 C25,35 38,30 50,50 C62,70 75,65 75,50 C75,35 62,30 50,50 C38,70 25,65 25,50 Z" 
-                        fill="none" stroke="url(#footerInfinityGrad)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path
+                    d="M25,50 C25,35 38,30 50,50 C62,70 75,65 75,50 C75,35 62,30 50,50 C38,70 25,65 25,50 Z"
+                    fill="none"
+                    stroke="url(#footerInfinityGrad)"
+                    stroke-width="11"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                   <circle cx="25" cy="50" r="6.5" fill="#2563eb" />
                   <circle cx="75" cy="50" r="6.5" fill="#7c3aed" />
                 </svg>
@@ -190,7 +296,10 @@ const Footer = () => {
                 "Google Gemini",
                 "Pinecone",
               ].map((tech) => (
-                <li key={tech} className="flex items-center gap-2 text-sm text-gray-500">
+                <li
+                  key={tech}
+                  className="flex items-center gap-2 text-sm text-gray-500"
+                >
                   <span
                     className="w-1.5 h-1.5 rounded-full bg-linear-to-br from-blue-600 to-violet-600 flex-shrink-0"
                     aria-hidden="true"
