@@ -21,6 +21,11 @@ const Profile = () => {
   const { backendUrl, userData, setUserData } = useContext(AppContent);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [profilePicFailed, setProfilePicFailed] = useState(false);
+
+  useEffect(() => {
+    setProfilePicFailed(false);
+  }, [userData?.profilePic]);
 
   // Form State
   const [name, setName] = useState("");
@@ -180,17 +185,17 @@ const Profile = () => {
               <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-6 pb-6 border-b border-slate-100">
                 <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
                   {/* Custom initials / profile image */}
-                  {userData.profilePic ? (
+                  {userData.profilePic && !profilePicFailed ? (
                     <img
                       src={userData.profilePic}
                       alt={userData.name}
                       className="w-20 h-20 rounded-full object-cover border border-slate-200 shadow-xs"
-                      onError={async (e) => {
-                        e.target.onerror = null;
+                      onError={async () => {
                         toast.warning(
                           "Failed to load custom profile image. Displaying initials fallback.",
                         );
                         setProfilePic("");
+                        setProfilePicFailed(true);
                         const cleared = { ...userData, profilePic: "" };
                         setUserData(cleared);
                         localStorage.setItem(

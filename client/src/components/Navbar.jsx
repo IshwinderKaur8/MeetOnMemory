@@ -36,6 +36,11 @@ const Navbar = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [mobileNotifOpen, setMobileNotifOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  useEffect(() => {
+    setImgFailed(false);
+  }, [userData?.profilePic]);
 
   // Unread notifications mock state
   const [unreadCount, setUnreadCount] = useState(3);
@@ -401,15 +406,12 @@ const Navbar = () => {
                           ? userData.name.charAt(0).toUpperCase()
                           : "U"}
                       </div>
-                      {userData?.profilePic && (
+                      {userData?.profilePic && !imgFailed && (
                         <img
                           src={userData.profilePic}
                           alt={userData.name}
                           className="absolute inset-0 w-full h-full object-cover border border-gray-200/40"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.style.display = "none";
-                          }}
+                          onError={() => setImgFailed(true)}
                         />
                       )}
                     </div>
@@ -565,15 +567,12 @@ const Navbar = () => {
                       ? userData.name.charAt(0).toUpperCase()
                       : "U"}
                   </div>
-                  {userData?.profilePic && (
+                  {userData?.profilePic && !imgFailed && (
                     <img
                       src={userData.profilePic}
                       alt={userData.name}
                       className="absolute inset-0 w-full h-full object-cover border border-gray-200/40"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = "none";
-                      }}
+                      onError={() => setImgFailed(true)}
                     />
                   )}
                 </div>
