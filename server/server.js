@@ -20,16 +20,17 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { initVectorStore } from "./utils/embeddingUtils.js";
 import meetingSocket from "./socket/meetingSocket.js";
-
+import { initRedis } from "./services/redisService.js";
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 // ================================
-// DATABASE
+// DATABASE & CACHE
 // ================================
 await connectDB();
+initRedis(); // Non-blocking: allows server to start even if Redis is unavailable
 
 // ================================
 // MIDDLEWARES

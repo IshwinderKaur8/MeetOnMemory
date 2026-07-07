@@ -5,6 +5,7 @@
 
 import { searchVectorStore } from "../utils/embeddingUtils.js";
 import Meeting from "../models/meetingModel.js";
+import { getRedisClient } from "../services/redisService.js";
 
 /**
  * @desc  Search meetings using AI embeddings
@@ -64,12 +65,27 @@ export const semanticSearch = async (req, res) => {
       };
     });
 
-    // ✅ Step 6 — Send response
-    return res.status(200).json({
+    const responsePayload = {
       success: true,
       message: "AI Search successful.",
       results: mergedResults,
-    });
+    };
+
+    // ✅ Step 6 — Save to Redis Cache (if applicable)
+    if (req.cacheKey) {
+      const redisClient = getRedisClient();
+      if (redisClient && redisClient.isReady) {
+        // Cache for 1 hour (3600 seconds)
+        await redisClient.setEx(
+          req.cacheKey,
+          3600,
+          JSON.stringify(responsePayload),
+        );
+      }
+    }
+
+    // ✅ Step 7 — Send response
+    return res.status(200).json(responsePayload);
   } catch (error) {
     console.error("❌ Semantic search error:", error);
     res.status(500).json({
