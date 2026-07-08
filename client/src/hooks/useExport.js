@@ -17,6 +17,7 @@ const useExport = () => {
         {
           withCredentials: true,
           responseType: "blob",
+          timeout: 60000,
         }
       );
       

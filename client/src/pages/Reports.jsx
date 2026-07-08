@@ -27,6 +27,8 @@ const Reports = () => {
         );
         if (aiRes.data.success) {
           setAiInsights(aiRes.data.reply);
+        } else {
+          setAiInsights("AI insights unavailable — please try again later.");
         }
       } catch (err) {
         console.error("AI Insights error:", err);
