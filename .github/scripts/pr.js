@@ -98,11 +98,16 @@ export async function processPrValidation({ github, context, core }) {
     ),
   );
 
-  const summary = `### PR Validation Checklist\n\n${lines.join("\n")}\n\n${
-    linkedIssues.length === 0 ? comments.missingLinkedIssue() : ""
-  }${
-    !isMeaningfulDescription(body) ? `\n${comments.missingPrDescription()}` : ""
-  }`;
+  const summary = comments.prValidationSummary({
+    lines: {
+      author: pr.user.login,
+      items: lines,
+    },
+    missingLinkedIssueText: linkedIssues.length === 0 ? comments.missingLinkedIssue() : "",
+    missingDescriptionText: !isMeaningfulDescription(body)
+      ? `\n${comments.missingPrDescription()}`
+      : "",
+  });
   await createOrUpdateMarkerComment(
     github,
     context,

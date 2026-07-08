@@ -154,7 +154,7 @@ test("claim: max 4 active issues", async () => {
     author_association: "CONTRIBUTOR",
   };
   await processClaim({ github, context, core: createCore() });
-  assert.ok(github.state.comments.some((c) => c.body.includes("maximum is 4")));
+  assert.ok(github.state.comments.some((c) => c.body.includes("current limit is 4")));
 });
 
 test("unclaim: unauthorized unclaim", async () => {
