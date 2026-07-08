@@ -587,7 +587,8 @@ export const getAllMeetings = async (req, res) => {
 
     const meetings = await Meeting.find({ uploadedBy: userId })
       .sort({ createdAt: -1 })
-      .select("title summary structuredMoM createdAt date meetingType status");
+      .select("title summary structuredMoM createdAt date meetingType status time duration recordingType organization")
+      .populate("organization", "name");
 
     return res.status(200).json({ success: true, meetings });
   } catch (error) {
