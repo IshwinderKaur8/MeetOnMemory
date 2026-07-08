@@ -13,6 +13,7 @@ import {
   deleteMeeting,           // EXISTING: Delete meeting
   searchMeetingsByText,    // 🆕 NEW: Voice/Text Search
 } from "../controllers/meetingController.js";
+import { exportMeeting } from "../controllers/exportController.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" }); // temporary upload directory
@@ -36,6 +37,9 @@ router.get("/:id", userAuth, getMeetingById);
 
 // ✅ Update Meeting (for Meeting Details Page - rename)
 router.patch("/:id", userAuth, updateMeeting);
+
+// ✅ Export Meeting
+router.get("/:id/export", userAuth, exportMeeting);
 
 // ✅ Delete Meeting
 router.delete("/delete/:id", userAuth, writeLimiter, deleteMeeting);

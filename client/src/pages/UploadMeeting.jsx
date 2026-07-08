@@ -32,6 +32,8 @@ const UploadMeeting = () => {
   const [meetingId, setMeetingId] = useState(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summary, setSummary] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -222,6 +224,51 @@ const UploadMeeting = () => {
       );
     } finally {
       setIsSummarizing(false);
+    }
+  };
+
+  const handleExport = async (format) => {
+    if (!meetingId) {
+      toast.error("No meeting generated yet.");
+      return;
+    }
+    try {
+      setIsExporting(true);
+      setShowExportMenu(false);
+      
+      const response = await axios.get(
+        `${backendUrl}/api/meetings/${meetingId}/export?format=${format}`,
+        {
+          withCredentials: true,
+          responseType: "blob",
+        }
+      );
+      
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      
+      let filename = `${title || "meeting"}_mom.${format}`;
+      const disposition = response.headers['content-disposition'];
+      if (disposition && disposition.indexOf('filename=') !== -1) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) { 
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(`Error exporting meeting to ${format}:`, err);
+      toast.error(`Failed to export meeting to ${format}`);
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -586,6 +633,44 @@ const UploadMeeting = () => {
                         <Copy className="w-3.5 h-3.5" />
                         Copy
                       </button>
+
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowExportMenu(!showExportMenu)}
+                          disabled={isExporting}
+                          className="px-4 py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        >
+                          {isExporting ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Download className="w-3.5 h-3.5" />
+                          )}
+                          {isExporting ? "Exporting..." : "Export MoM"}
+                        </button>
+                        {showExportMenu && (
+                          <div className="absolute bottom-full left-0 mb-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-20 overflow-hidden">
+                            <button
+                              onClick={() => handleExport("pdf")}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors font-medium border-b border-gray-50"
+                            >
+                              Export as PDF
+                            </button>
+                            <button
+                              onClick={() => handleExport("docx")}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors font-medium border-b border-gray-50"
+                            >
+                              Export as DOCX
+                            </button>
+                            <button
+                              onClick={() => handleExport("md")}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                            >
+                              Export as Markdown
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
                       <button
                         onClick={() =>
                           toast.info(

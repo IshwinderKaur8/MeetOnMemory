@@ -15,6 +15,7 @@ import {
   Pin,
   Mic,
   MicOff,
+  Download,
 } from "lucide-react";
 
 /**
@@ -36,6 +37,7 @@ const Summaries = () => {
   const [viewModal, setViewModal] = useState(null);
   const [pinnedIds, setPinnedIds] = useState([]);
   const [starredIds, setStarredIds] = useState([]);
+  const [openExportMenuId, setOpenExportMenuId] = useState(null);
 
   // 🎙️ Setup browser-based voice recognition
   useEffect(() => {
@@ -172,6 +174,42 @@ const Summaries = () => {
   const handleCopy = (summary) => {
     navigator.clipboard.writeText(summary.summary);
     toast.success("Summary copied!");
+  };
+
+  const handleExport = async (meeting, format) => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/meetings/${meeting._id}/export?format=${format}`,
+        {
+          withCredentials: true,
+          responseType: "blob",
+        }
+      );
+      
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      
+      let filename = `${meeting.title || "meeting"}_mom.${format}`;
+      const disposition = response.headers['content-disposition'];
+      if (disposition && disposition.indexOf('filename=') !== -1) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) { 
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(`Error exporting meeting to ${format}:`, err);
+      toast.error(`Failed to export meeting to ${format}`);
+    }
   };
 
   return (
@@ -316,23 +354,50 @@ const Summaries = () => {
                       View
                     </button>
 
-                    <button
-                      onClick={() => {
-                        const blob = new Blob(
-                          [summary.summary || summary.transcript || ""],
-                          { type: "text/plain;charset=utf-8" }
-                        );
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `${summary.title || "meeting"}_summary.txt`;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                      }}
-                      className="text-sm px-4 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 ml-auto"
+                    <div 
+                      className="relative ml-auto"
+                      onMouseEnter={() => setOpenExportMenuId(summary._id)}
+                      onMouseLeave={() => setOpenExportMenuId(null)}
                     >
-                      Download
-                    </button>
+                      <button
+                        onClick={() => setOpenExportMenuId(openExportMenuId === summary._id ? null : summary._id)}
+                        className="text-sm px-4 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2"
+                      >
+                        <Download size={16} /> Export
+                      </button>
+                      
+                      {openExportMenuId === summary._id && (
+                        <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 min-w-[140px]">
+                          <button
+                            onClick={() => {
+                              handleExport(summary, "pdf");
+                              setOpenExportMenuId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            Export as PDF
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleExport(summary, "docx");
+                              setOpenExportMenuId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            Export as DOCX
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleExport(summary, "md");
+                              setOpenExportMenuId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            Export as MD
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Calendar, Clock, FileText, Tag, Trash2, Download, Edit2, Eye, MoreVertical } from "lucide-react";
 
-const MeetingCard = ({ meeting, onDelete, onRename, onDownload }) => {
+const MeetingCard = ({ meeting, onDelete, onRename, onExport, onView }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [showExportSubMenu, setShowExportSubMenu] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState(meeting.title);
 
@@ -63,7 +64,10 @@ const MeetingCard = ({ meeting, onDelete, onRename, onDownload }) => {
           )}
           <div className="relative">
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => {
+                setShowMenu(!showMenu);
+                setShowExportSubMenu(false);
+              }}
               className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <MoreVertical size={18} className="text-gray-500" />
@@ -80,13 +84,60 @@ const MeetingCard = ({ meeting, onDelete, onRename, onDownload }) => {
                   <Edit2 size={16} className="text-gray-500" />
                   Rename
                 </button>
-                <button
-                  onClick={() => onDownload(meeting)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                <div
+                  className="relative"
+                  onMouseEnter={() => setShowExportSubMenu(true)}
+                  onMouseLeave={() => setShowExportSubMenu(false)}
                 >
-                  <Download size={16} className="text-gray-500" />
-                  Download
-                </button>
+                  <button
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center justify-between gap-2 text-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowExportSubMenu(!showExportSubMenu);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Download size={16} className="text-gray-500" />
+                      Export
+                    </div>
+                    <svg className={`w-4 h-4 text-gray-400 transition-transform ${showExportSubMenu ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  
+                  {showExportSubMenu && (
+                    <div className="absolute right-full top-0 mr-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 min-w-[140px]">
+                      <button
+                        onClick={() => {
+                          onExport(meeting, "pdf");
+                          setShowMenu(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                      >
+                        Export as PDF
+                      </button>
+                      <button
+                        onClick={() => {
+                          onExport(meeting, "docx");
+                          setShowMenu(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                      >
+                        Export as DOCX
+                      </button>
+                      <button
+                        onClick={() => {
+                          onExport(meeting, "md");
+                          setShowMenu(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                      >
+                        Export as MD
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
                 <button
                   onClick={() => {
                     onDelete(meeting._id);
@@ -176,7 +227,7 @@ const MeetingCard = ({ meeting, onDelete, onRename, onDownload }) => {
           Created {formatDate(meeting.createdAt)}
         </span>
         <button
-          onClick={() => onDownload(meeting)}
+          onClick={() => onView(meeting)}
           className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
         >
           <Eye size={16} />

@@ -13,6 +13,7 @@ const MeetingRepository = () => {
   const { backendUrl } = React.useContext(AppContent);
   const [meetings, setMeetings] = useState([]);
   const [filteredMeetings, setFilteredMeetings] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -192,31 +193,48 @@ const MeetingRepository = () => {
     }
   };
 
-  const handleDownload = (meeting) => {
-    // Create a text file with meeting details
-    const content = `
-Meeting: ${meeting.title}
-Date: ${meeting.date ? new Date(meeting.date).toLocaleDateString() : "N/A"}
-Type: ${meeting.meetingType || "N/A"}
-Status: ${meeting.status || "N/A"}
+  const handleExport = async (meeting, format) => {
+    try {
+      setIsExporting(true);
+      
+      const response = await axios.get(
+        `${backendUrl}/api/meetings/${meeting._id}/export?format=${format}`,
+        {
+          withCredentials: true,
+          responseType: "blob",
+        }
+      );
+      
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      
+      let filename = `${meeting.title || "meeting"}_mom.${format}`;
+      const disposition = response.headers['content-disposition'];
+      if (disposition && disposition.indexOf('filename=') !== -1) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) { 
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(`Error exporting meeting to ${format}:`, err);
+      toast.error(`Failed to export meeting to ${format}`);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
-Summary:
-${meeting.summary || "No summary available"}
-
-Transcript:
-${meeting.transcript || "No transcript available"}
-    `.trim();
-
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${meeting.title.replace(/[^a-z0-9]/gi, "_")}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("Meeting downloaded");
+  const handleView = (meeting) => {
+    navigate(`/meeting/${meeting._id}`);
   };
 
   const handleFilterChange = (key, value) => {
@@ -329,7 +347,8 @@ ${meeting.transcript || "No transcript available"}
                 meeting={meeting}
                 onDelete={handleDelete}
                 onRename={handleRename}
-                onDownload={handleDownload}
+                onExport={handleExport}
+                onView={handleView}
               />
             ))}
           </div>
