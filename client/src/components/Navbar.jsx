@@ -46,8 +46,8 @@ const Navbar = () => {
   }, [userData?.profilePic]);
 
   // Unread notifications mock state
-  const [unreadCount, setUnreadCount] = useState(3);
-  const [notifications, setNotifications] = useState([
+  const [unreadCount] = useState(3);
+  const [notifications] = useState([
     {
       id: 1,
       title: "Minutes of Meeting Ready",
