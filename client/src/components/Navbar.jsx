@@ -31,7 +31,8 @@ const NAV_LINKS = [
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
+  const { backendUrl, userData, setUserData, setIsLoggedin } =
+    useContext(AppContent);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,39 +45,63 @@ const Navbar = () => {
     setImgFailed(false);
   }, [userData?.profilePic]);
 
-  // Unread notifications mock state
-  const [unreadCount, setUnreadCount] = useState(3);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Minutes of Meeting Ready",
-      description: "AI summary for 'Q3 Sprint Review' is now compiled.",
-      time: "10m ago",
-      unread: true,
-    },
-    {
-      id: 2,
-      title: "New Team Member Joined",
-      description: "Sarah Jenkins has linked to the organization.",
-      time: "2h ago",
-      unread: true,
-    },
-    {
-      id: 3,
-      title: "Policy Update Alert",
-      description: "The 'Privacy & Security Policy' has been updated.",
-      time: "1d ago",
-      unread: true,
-    },
-    {
-      id: 4,
-      title: "Welcome to MeetOnMemory",
-      description:
-        "Start recording or uploading meetings to generate summaries.",
-      time: "3d ago",
-      unread: false,
-    },
-  ]);
+  // Fetch unread count from backend
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+
+    if (seconds < 60) return "Just now";
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  useEffect(() => {
+    if (userData && backendUrl) {
+      const fetchUnreadCount = async () => {
+        try {
+          const { data } = await axios.get(
+            `${backendUrl}/api/notifications/unread-count`,
+            { withCredentials: true },
+          );
+          if (data.success) {
+            setUnreadCount(data.unreadCount);
+          }
+        } catch (err) {
+          console.error("Error fetching unread count:", err);
+        }
+      };
+
+      const fetchRecentNotifications = async () => {
+        try {
+          const { data } = await axios.get(`${backendUrl}/api/notifications`, {
+            withCredentials: true,
+          });
+          if (data.success) {
+            setNotifications(
+              data.notifications.slice(0, 5).map((n) => ({
+                id: n.id,
+                title: n.title,
+                description: n.description,
+                time: formatTimeAgo(n.createdAt),
+                unread: !n.isRead,
+              })),
+            );
+          }
+        } catch (err) {
+          console.error("Error fetching notifications:", err);
+        }
+      };
+
+      fetchUnreadCount();
+      fetchRecentNotifications();
+    }
+  }, [userData, backendUrl]);
 
   const menuRef = useRef();
   const mobileMenuRef = useRef();
@@ -202,11 +227,6 @@ const Navbar = () => {
       return currentPath === "/ai-search";
     }
     return currentPath === tabPath;
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
-    setUnreadCount(0);
   };
 
   const appLinks = [
@@ -356,14 +376,15 @@ const Navbar = () => {
                         <span className="font-bold text-gray-800 text-sm">
                           Notifications
                         </span>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={markAllAsRead}
-                            className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-                          >
-                            Mark all as read
-                          </button>
-                        )}
+                        <button
+                          onClick={() => {
+                            setNotificationsOpen(false);
+                            navigate("/notifications");
+                          }}
+                          className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                        >
+                          View All
+                        </button>
                       </div>
                       <div className="max-h-64 overflow-y-auto divide-y divide-gray-50">
                         {notifications.length > 0 ? (
@@ -621,7 +642,10 @@ const Navbar = () => {
 
               {/* Mobile Notifications Section Toggle */}
               <button
-                onClick={() => setMobileNotifOpen(!mobileNotifOpen)}
+                onClick={() => {
+                  setMobileOpen(false);
+                  navigate("/notifications");
+                }}
                 className={`w-full flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-xl transition-all cursor-pointer ${
                   mobileNotifOpen
                     ? "bg-blue-50/50 text-blue-600"
@@ -640,38 +664,6 @@ const Navbar = () => {
                   </span>
                 )}
               </button>
-
-              {/* Mobile Notifications Expandable List */}
-              {mobileNotifOpen && (
-                <div className="mx-2 bg-gray-50/60 rounded-xl divide-y divide-gray-100 border border-gray-100 overflow-hidden mb-2">
-                  {notifications.map((notif) => (
-                    <div key={notif.id} className="p-3 text-left">
-                      <div className="flex justify-between items-start gap-2 mb-0.5">
-                        <p className="font-bold text-xs text-gray-800 flex items-center gap-1.5">
-                          {notif.unread && (
-                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                          )}
-                          {notif.title}
-                        </p>
-                        <span className="text-[9px] text-gray-400 font-semibold">
-                          {notif.time}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-gray-500 leading-snug">
-                        {notif.description}
-                      </p>
-                    </div>
-                  ))}
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllAsRead}
-                      className="w-full text-center py-2 text-xs font-bold text-blue-600 hover:text-blue-800 bg-white border-t border-gray-100 cursor-pointer"
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-              )}
 
               <button
                 onClick={() => {
