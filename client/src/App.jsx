@@ -29,6 +29,9 @@ import Profile from "./pages/Profile.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import Tasks from "./pages/Tasks.jsx";
+import KnowledgeTimeline from "./pages/KnowledgeTimeline.jsx";
+// ...inside <Routes>:
+<Route path="/knowledge/:decisionId" element={<KnowledgeTimeline />} />
 import Settings from "./pages/Settings.jsx";
 
 // --- Components ---

@@ -103,18 +103,22 @@ const Tasks = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Extract tasks from meetings
-  useEffect(() => {
-    const fetchMeetingsAndExtractTasks = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await axios.get(`${backendUrl}/api/meetings/all`, {
-          withCredentials: true,
-        });
-
-        if (res.data?.success) {
-          const meetingsData = res.data.meetings || [];
+  const res = await axios.get(`${backendUrl}/api/knowledge/action-items?status=all`, {
+  withCredentials: true,
+});
+if (res.data?.success) {
+  const items = res.data.actionItems.map((item) => ({
+    id: item._id,
+    title: item.text,
+    owner: item.owner,
+    dueDate: item.dueDate,
+    status: item.status,
+    meetingId: item.sourceMeetingId?._id,
+    meetingTitle: item.sourceMeetingId?.title,
+    meetingDate: item.sourceMeetingId?.date,
+  }));
+  setTasks(items);
+}
 
           // Extract action items from structuredMoM
           const extractedTasks = [];
