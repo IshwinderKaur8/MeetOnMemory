@@ -14,17 +14,33 @@ const run = async () => {
     console.log("✅ Database connected for knowledge graph backfill.");
 
     const meetings = await Meeting.find({
-     structuredMoM: { $ne: null },
+      structuredMoM: { $ne: null },
     }).sort({ date: 1 });
+
     console.log(`🔁 Backfilling ${meetings.length} meetings...`);
 
     for (const meeting of meetings) {
-     if (!meeting.structuredMoM) continue;
+      if (meeting.structuredMoM) {
+        try {
+          await processStructuredMoM(
+            meeting,
+            meeting.structuredMoM,
+          );
 
-       await processStructuredMoM(meeting, meeting.structuredMoM);
+          await detectResolutions(
+            meeting,
+            meeting.structuredMoM,
+          );
 
-       await detectResolutions(meeting, meeting.structuredMoM);
-   }
+          console.log(`  ✅ Processed meeting ${meeting._id}`);
+        } catch (meetingErr) {
+          console.error(
+            `  ⚠️ Failed meeting ${meeting._id}:`,
+            meetingErr.message,
+          );
+        }
+      }
+    }
 
     console.log("🎉 Knowledge graph backfill completed!");
     process.exit(0);
