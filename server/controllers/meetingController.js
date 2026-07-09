@@ -967,14 +967,17 @@ export const notifyLiveMeeting = async (req, res) => {
       return res.status(500).json({ success: false, message: "Socket.IO not initialized" });
     }
 
-    // Try to find users based on the strings provided (name or email)
-    const searchTerms = participants.map(p => p.name || p);
-    console.log("Searching for live meeting participants:", searchTerms);
+    // Extract both name and email from participant objects
+    const searchNames = participants.map(p => p.name).filter(Boolean);
+    const searchEmails = participants.map(p => p.email || p.name).filter(Boolean);
+    
+    console.log("Searching for live meeting participants. Names:", searchNames, "Emails:", searchEmails);
 
     const dbUsers = await User.find({
+      organization: req.user.organization, // Scope to caller's organization
       $or: [
-        { email: { $in: searchTerms } },
-        { name: { $in: searchTerms } }
+        { email: { $in: searchEmails } },
+        { name: { $in: searchNames } }
       ],
       _id: { $ne: uploaderId } // Don't notify the creator
     });
@@ -982,7 +985,7 @@ export const notifyLiveMeeting = async (req, res) => {
     console.log(`Found ${dbUsers.length} users matching criteria.`);
 
     for (const user of dbUsers) {
-      console.log(`Preparing to notify user ${user.email} (${user._id}) for live room ${roomId}`);
+      console.log(`Preparing to notify user (${user._id}) for live room ${roomId}`);
       await createAndPushNotification(
         io,
         user._id,

@@ -78,6 +78,6 @@ router.post("/search", userAuth, searchMeetingsByText);
 router.put("/:id", userAuth, writeLimiter, requireOwner(Meeting), updateMeeting);
 
 // ✅ Notify Live Meeting Participants (from CreateMeeting Live section)
-router.post("/notify-live", userAuth, notifyLiveMeeting);
+router.post("/notify-live", userAuth, writeLimiter, notifyLiveMeeting);
 
 export default router;
