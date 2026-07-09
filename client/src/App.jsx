@@ -30,6 +30,8 @@ import Calendar from "./pages/Calendar.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import Tasks from "./pages/Tasks.jsx";
 import Settings from "./pages/Settings.jsx";
+import Navbar from "./components/Navbar";
+import ScrollNavigator from "./components/ScrollNavigator";
 
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -41,6 +43,9 @@ const App = () => {
   const hideFooterRoutes = ["/login"];
 
   const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
+  
+  // Only activate navigation controller panel when exactly on the landing page fold
+  const shouldShowScrollNavigator = location.pathname === "/";
 
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
@@ -283,6 +288,10 @@ const App = () => {
         {/* ✅ Fallback route — send unknown routes to Home */}
         <Route path="*" element={<Home />} />
       </Routes>
+      
+      {/* Floating Section Controller overlay */}
+      {shouldShowScrollNavigator && <ScrollNavigator />}
+
       {/* Global Footer */}
       {shouldShowFooter && <Footer />}
 
