@@ -28,13 +28,14 @@ import {
  */
 
 const STATUS_STYLES = {
-  "to-do": {
-    label: "To Do",
+  open: {
+    label: "Open",
     bgColor: "bg-slate-100",
     textColor: "text-slate-700",
     borderColor: "border-slate-200",
     icon: Clock,
   },
+
   "in-progress": {
     label: "In Progress",
     bgColor: "bg-blue-50",
@@ -42,21 +43,24 @@ const STATUS_STYLES = {
     borderColor: "border-blue-200",
     icon: Loader2,
   },
-  completed: {
-    label: "Completed",
+
+  resolved: {
+    label: "Resolved",
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-700",
     borderColor: "border-emerald-200",
     icon: CheckCircle2,
   },
-  overdue: {
-    label: "Overdue",
+
+  superseded: {
+    label: "Superseded",
     bgColor: "bg-red-50",
     textColor: "text-red-700",
     borderColor: "border-red-200",
     icon: AlertCircle,
   },
 };
+    
 
 const PRIORITY_STYLES = {
   high: {
@@ -118,18 +122,12 @@ useEffect(() => {
       );
 
       if (res.data?.success) {
-        const statusMap = {
-          open: "to-do",
-          "in-progress": "in-progress",
-          resolved: "completed",
-          superseded: "completed",
-        };
         const items = res.data.actionItems.map((item) => ({
           id: item._id,
           title: item.text,
           owner: item.owner || "Unassigned",
           dueDate: item.dueDate,
-          status: statusMap[item.status] || "to-do",
+          status: item.status || "open",
 
           meetingId: item.sourceMeetingId?._id,
           meetingTitle: item.sourceMeetingId?.title,
@@ -166,11 +164,10 @@ useEffect(() => {
     // Search filter
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch =
-      task.title.toLowerCase().includes(searchLower) ||
-      task.meetingTitle.toLowerCase().includes(searchLower) ||
-      task.owner.toLowerCase().includes(searchLower) ||
-      task.description.toLowerCase().includes(searchLower);
-
+      task.title?.toLowerCase().includes(searchLower) ||
+      task.meetingTitle?.toLowerCase().includes(searchLower) ||
+      task.owner?.toLowerCase().includes(searchLower) ||
+      task.description?.toLowerCase().includes(searchLower);
     // Status filter
     const matchesStatus =
       statusFilter === "all" || task.status === statusFilter;
@@ -218,11 +215,11 @@ useEffect(() => {
       }
       case "status": {
         const statusOrder = {
-          overdue: 0,
-          "to-do": 1,
-          "in-progress": 2,
-          completed: 3,
-        };
+           open: 0,
+           "in-progress": 1,
+           resolved: 2,
+           superseded: 3,
+     };
         comparison = statusOrder[a.status] - statusOrder[b.status];
         break;
       }
@@ -324,10 +321,10 @@ useEffect(() => {
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">All Status</option>
-                    <option value="to-do">To Do</option>
+                    <option value="open">Open</option>
                     <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="overdue">Overdue</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="superseded">Superseded</option>
                   </select>
                 </div>
 
