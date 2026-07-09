@@ -8,7 +8,7 @@ const KnowledgeTimeline = () => {
   const { decisionId } = useParams();
   const [lineage, setLineage] = useState([]);
   const [loading, setLoading] = useState(true);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const { backendUrl } = useContext(AppContent);
 
   useEffect(() => {
     const fetchLineage = async () => {
@@ -25,8 +25,7 @@ const KnowledgeTimeline = () => {
       }
     };
     fetchLineage();
-  }, [decisionId]);
-
+  }, [backendUrl, decisionId]);
   return (
     <div>
       <Navbar />
