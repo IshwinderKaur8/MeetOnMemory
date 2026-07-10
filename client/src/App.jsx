@@ -29,6 +29,7 @@ import Profile from "./pages/Profile.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import Tasks from "./pages/Tasks.jsx";
+import KnowledgeTimeline from "./pages/KnowledgeTimeline.jsx";
 import Settings from "./pages/Settings.jsx";
 import Navbar from "./components/Navbar";
 import ScrollNavigator from "./components/ScrollNavigator";
@@ -36,12 +37,12 @@ import ScrollNavigator from "./components/ScrollNavigator";
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Footer from "./components/Footer.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const App = () => {
   const location = useLocation();
 
   const hideFooterRoutes = ["/login"];
-
   const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
   
   // Only activate navigation controller panel when exactly on the landing page fold
@@ -117,190 +118,184 @@ const App = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Toast Notifications */}
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+      <ErrorBoundary>
+        {/* Toast Notifications */}
+        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
-      <Routes>
-        {/* === Public Routes (No login required) === */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/email-verify" element={<EmailVerify />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Routes>
+          {/* === Public Routes (No login required) === */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/email-verify" element={<EmailVerify />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* === Protected Routes (Require login) === */}
-        <Route
-          path="/meetings"
-          element={
-            <ProtectedRoute>
-              <MeetingListPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* === Protected Routes (Require login) === */}
+          <Route
+            path="/meetings"
+            element={
+              <ProtectedRoute>
+                <MeetingListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/knowledge/:decisionId"
+            element={
+              <ProtectedRoute>
+                <KnowledgeTimeline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/select-role"
+            element={
+              <ProtectedRoute>
+                <SelectRolePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-organization"
+            element={
+              <ProtectedRoute>
+                <CreateOrganizationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/select-role"
-          element={
-            <ProtectedRoute>
-              <SelectRolePage />
-            </ProtectedRoute>
-          }
-        />
+          {/* ✅ Newly Added Dashboard Feature Routes */}
+          <Route
+            path="/create-meeting"
+            element={
+              <ProtectedRoute>
+                <CreateMeeting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload-meeting"
+            element={
+              <ProtectedRoute>
+                <UploadMeeting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/policies"
+            element={
+              <ProtectedRoute>
+                <Policies />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/summaries"
+            element={
+              <ProtectedRoute>
+                <Summaries />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-search"
+            element={
+              <ProtectedRoute>
+                <AiSearch />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/meeting-room/:roomId" element={<MeetingRoom />} />
+          <Route
+            path="/meeting/:id"
+            element={
+              <ProtectedRoute>
+                <MeetingDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/team-members"
+            element={
+              <ProtectedRoute>
+                <TeamMembers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute>
+                <Calendar />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <Tasks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/create-organization"
-          element={
-            <ProtectedRoute>
-              <CreateOrganizationPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* ✅ Fallback route — send unknown routes to Home */}
+          <Route path="*" element={<Home />} />
+        </Routes>
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Floating Section Controller overlay */}
+        {shouldShowScrollNavigator && <ScrollNavigator />}
 
-        {/* ✅ Newly Added Dashboard Feature Routes */}
-        <Route
-          path="/create-meeting"
-          element={
-            <ProtectedRoute>
-              <CreateMeeting />
-            </ProtectedRoute>
-          }
-        />
+        {/* Global Footer */}
+        {shouldShowFooter && <Footer />}
 
-        <Route
-          path="/upload-meeting"
-          element={
-            <ProtectedRoute>
-              <UploadMeeting />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/policies"
-          element={
-            <ProtectedRoute>
-              <Policies />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/summaries"
-          element={
-            <ProtectedRoute>
-              <Summaries />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/ai-search"
-          element={
-            <ProtectedRoute>
-              <AiSearch />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="/meeting-room/:roomId" element={<MeetingRoom />} />
-
-        <Route
-          path="/meeting/:id"
-          element={
-            <ProtectedRoute>
-              <MeetingDetails />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/team-members"
-          element={
-            <ProtectedRoute>
-              <TeamMembers />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/calendar"
-          element={
-            <ProtectedRoute>
-              <Calendar />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedRoute>
-              <Notifications />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/tasks"
-          element={
-            <ProtectedRoute>
-              <Tasks />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ✅ Fallback route — send unknown routes to Home */}
-        <Route path="*" element={<Home />} />
-      </Routes>
-      
-      {/* Floating Section Controller overlay */}
-      {shouldShowScrollNavigator && <ScrollNavigator />}
-
-      {/* Global Footer */}
-      {shouldShowFooter && <Footer />}
-
-      {!isMobile && (
-        <>
-          <div className={`custom-cursor ${isHovered ? "hovered" : ""}`} />
-          <div className={`custom-cursor-ring ${isHovered ? "hovered" : ""}`} />
-        </>
-      )}
+        {!isMobile && (
+          <>
+            <div className={`custom-cursor ${isHovered ? "hovered" : ""}`} />
+            <div className={`custom-cursor-ring ${isHovered ? "hovered" : ""}`} />
+          </>
+        )}
+      </ErrorBoundary>
     </div>
   );
 };

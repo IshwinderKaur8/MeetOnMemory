@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar.jsx";
-import axios from "axios";
+import { meetingApi } from "../services";
 import AppContent from "../context/AppContent";
 import useExport from "../hooks/useExport.js";
 import { toast } from "react-toastify";
@@ -27,7 +27,6 @@ import {
  */
 
 const Summaries = () => {
-  const { backendUrl } = useContext(AppContent);
   const [summaries, setSummaries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -91,9 +90,7 @@ const Summaries = () => {
   useEffect(() => {
     const fetchSummaries = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/api/meetings/all`, {
-          withCredentials: true,
-        });
+        const res = await meetingApi.getAllMeetings();
 
         if (res.data?.success) {
           setSummaries(res.data.meetings || []);
@@ -109,7 +106,7 @@ const Summaries = () => {
     };
 
     fetchSummaries();
-  }, [backendUrl]);
+  }, []);
 
   // 🔍 Filter meetings by title or summary
   const filteredSummaries = summaries.filter(
@@ -138,12 +135,7 @@ const Summaries = () => {
       return;
 
     try {
-      const res = await axios.delete(
-        `${backendUrl}/api/meetings/delete/${id}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await meetingApi.deleteMeeting(id);
 
       if (res.data?.success) {
         setSummaries((prev) => prev.filter((s) => s._id !== id));
@@ -183,27 +175,27 @@ const Summaries = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <Navbar />
 
       {/* Centered Container */}
       <div className="flex flex-col items-center justify-center flex-grow px-6 py-20 md:py-28">
         <div className="w-full max-w-5xl text-center">
           {/* Header */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center justify-center gap-2">
             🧠{" "}
             <span className="bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
               AI Meeting Summaries
             </span>
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
             Review automatically generated <b>Minutes of Meeting</b>, action
             items, and insights from all recorded sessions.
           </p>
 
           {/* 🔍 Search Bar with Voice + Text */}
           <div className="flex items-center justify-center mb-10">
-            <div className="flex items-center w-full sm:w-[30rem] bg-white shadow-sm border border-gray-200 rounded-full overflow-hidden hover:ring-2 hover:ring-blue-300 transition">
+            <div className="flex items-center w-full sm:w-[30rem] bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-full overflow-hidden hover:ring-2 hover:ring-blue-300 transition">
               <input
                 type="text"
                 placeholder="Search meetings by title or keyword..."
@@ -336,19 +328,28 @@ const Summaries = () => {
                       View
                     </button>
 
-                    <div 
+                    <div
                       className="relative ml-auto"
                       onMouseEnter={() => setOpenExportMenuId(summary._id)}
                       onMouseLeave={() => setOpenExportMenuId(null)}
                     >
                       <button
-                        onClick={() => setOpenExportMenuId(openExportMenuId === summary._id ? null : summary._id)}
+                        onClick={() =>
+                          setOpenExportMenuId(
+                            openExportMenuId === summary._id
+                              ? null
+                              : summary._id,
+                          )
+                        }
                         disabled={isExporting}
                         className="text-sm px-4 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Download size={16} /> {isExporting && openExportMenuId === summary._id ? "Exporting..." : "Export"}
+                        <Download size={16} />{" "}
+                        {isExporting && openExportMenuId === summary._id
+                          ? "Exporting..."
+                          : "Export"}
                       </button>
-                      
+
                       {openExportMenuId === summary._id && (
                         <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 min-w-[140px]">
                           <button

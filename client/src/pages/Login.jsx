@@ -1,17 +1,15 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
 import AppContent from "../context/AppContent";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
-import { Eye, EyeOff } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { authApi } from "../services";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { backendUrl, setIsLoggedin, getUserData, setUserData } =
-    useContext(AppContent);
+  const { setIsLoggedin, getUserData, setUserData } = useContext(AppContent);
 
   const [state, setState] = useState("Login");
   const [name, setName] = useState("");
@@ -31,11 +29,10 @@ const Login = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    axios.defaults.withCredentials = true;
 
     try {
       if (state === "Sign Up") {
-        const { data } = await axios.post(`${backendUrl}/api/auth/register`, {
+        const { data } = await authApi.register({
           name,
           email,
           password,
@@ -46,13 +43,10 @@ const Login = () => {
         toast.success("Account created successfully!");
       }
 
-      const { data: loginData } = await axios.post(
-        `${backendUrl}/api/auth/login`,
-        {
-          email,
-          password,
-        },
-      );
+      const { data: loginData } = await authApi.login({
+        email,
+        password,
+      });
 
       if (loginData.success) {
         const user = await getUserData();
@@ -77,7 +71,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400 overflow-hidden px-4 sm:px-6">
+    <div className="relative flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400 dark:from-gray-900 dark:to-slate-900 overflow-hidden px-4 sm:px-6">
       {/* Ambient background gradients */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[128px] " />

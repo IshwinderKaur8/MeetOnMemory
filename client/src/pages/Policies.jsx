@@ -1,14 +1,13 @@
 import React, {
   useState,
   useEffect,
-  useContext,
-  useMemo,
   useRef,
   useCallback,
+  useMemo,
 } from "react";
 import Navbar from "../components/Navbar.jsx";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { policyApi } from "../services";
 import AppContent from "../context/AppContent";
 import {
   Upload,
@@ -319,8 +318,6 @@ const DropZone = ({ onFile, disabled, selectedFile }) => {
 // Main Component
 // ──────────────────────────────────────────────
 const Policies = () => {
-  const { backendUrl } = useContext(AppContent);
-
   // Upload state
   const [file, setFile] = useState(null);
   const [commitMsg, setCommitMsg] = useState("");
@@ -351,9 +348,7 @@ const Policies = () => {
   const fetchPolicies = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${backendUrl}/api/policies`, {
-        withCredentials: true,
-      });
+      const res = await policyApi.getPolicies();
       if (res.data.success) setPolicies(res.data.policies || []);
       else toast.error(res.data.message || "Failed to load policies.");
     } catch (err) {
@@ -372,7 +367,7 @@ const Policies = () => {
     } finally {
       setLoading(false);
     }
-  }, [backendUrl]);
+  }, []);
 
   useEffect(() => {
     fetchPolicies();
@@ -420,20 +415,14 @@ const Policies = () => {
     setUploadProgress(0);
 
     try {
-      const res = await axios.post(
-        `${backendUrl}/api/policies/upload${isUpdate ? "?update=true" : ""}`,
-        formData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (event) => {
-            if (event.total) {
-              const pct = Math.round((event.loaded * 100) / event.total);
-              setUploadProgress(Math.min(pct, 85)); // cap at 85 — rest is AI processing
-            }
-          },
+      const res = await policyApi.uploadPolicy(formData, isUpdate, {
+        onUploadProgress: (event) => {
+          if (event.total) {
+            const pct = Math.round((event.loaded * 100) / event.total);
+            setUploadProgress(Math.min(pct, 85)); // cap at 85 — rest is AI processing
+          }
         },
-      );
+      });
 
       if (res.data.success) {
         setUploadStage("done");
@@ -488,10 +477,7 @@ const Policies = () => {
   // ── Download ──
   const handleDownload = async (policyId, filename = "policy.pdf") => {
     try {
-      const res = await axios.get(
-        `${backendUrl}/api/policies/download/${policyId}`,
-        { responseType: "blob", withCredentials: true },
-      );
+      const res = await policyApi.downloadPolicy(policyId);
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -512,9 +498,7 @@ const Policies = () => {
   // ── Delete ──
   const handleDelete = async (policyId) => {
     try {
-      const res = await axios.delete(`${backendUrl}/api/policies/${policyId}`, {
-        withCredentials: true,
-      });
+      const res = await policyApi.deletePolicy(policyId);
       if (res.data.success) {
         toast.success("Policy deleted.");
         setConfirmDelete(null);
@@ -540,11 +524,7 @@ const Policies = () => {
   const handleReanalyze = async (policyId) => {
     toast.info("🤖 Re-analyzing policy with AI…");
     try {
-      const res = await axios.post(
-        `${backendUrl}/api/policies/${policyId}/analyze`,
-        {},
-        { withCredentials: true },
-      );
+      const res = await policyApi.analyzePolicy(policyId);
       if (res.data.success) {
         toast.success("✅ AI analysis complete!");
         fetchPolicies();
@@ -583,20 +563,20 @@ const Policies = () => {
   // Render
   // ──────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <Navbar />
 
       <div className="max-w-7xl mx-auto w-full pt-24 pb-20 px-4 sm:px-6">
         {/* ── Page Header ── */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center gap-3">
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100">
-                <FileText className="w-5 h-5 text-indigo-600" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+              <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
+                <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               </span>
               Policy Repository
             </h1>
-            <p className="text-gray-500 mt-2 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">
               Upload, version, and track policy documents with AI-powered
               summaries.
             </p>
@@ -604,7 +584,7 @@ const Policies = () => {
 
           <button
             onClick={fetchPolicies}
-            className="inline-flex items-center gap-2 border border-gray-300 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100 text-sm font-medium transition self-start md:self-auto"
+            className="inline-flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-sm font-medium transition self-start md:self-auto"
             aria-label="Refresh policy list"
           >
             <RefreshCw className="w-4 h-4" /> Refresh
@@ -614,7 +594,7 @@ const Policies = () => {
         {/* ── Upload Card ── */}
         <div
           ref={uploadCardRef}
-          className="bg-white shadow-sm rounded-2xl mb-8 border border-gray-100 overflow-hidden"
+          className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl mb-8 border border-gray-100 dark:border-gray-700 overflow-hidden"
         >
           <div className="px-6 pt-6 pb-2">
             <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2 mb-4">

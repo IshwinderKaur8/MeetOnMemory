@@ -22,7 +22,7 @@ import { initVectorStore } from "./utils/embeddingUtils.js";
 import meetingSocket from "./socket/meetingSocket.js";
 import { initRedis } from "./services/redisService.js";
 import { globalLimiter } from "./middleware/rateLimiter.js";
-
+import knowledgeRoutes from "./routes/knowledgeRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -42,44 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // ================================
-// CSRF PROTECTION (CodeQL Fix)
-// ================================
-const csrfProtection = csrf({
-  cookie: {
-    key: "_csrf",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-  },
-});
-
-app.use((req, res, next) => {
-  // Bypass CSRF in development to avoid localhost cross-origin cookie blocking
-  if (process.env.NODE_ENV !== "production") {
-    return next();
-  }
-
-  if (req.method === "GET") {
-    csrfProtection(req, res, (err) => {
-      if (err) return next(err);
-      res.cookie("XSRF-TOKEN", req.csrfToken(), {
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: false, // JS-readable for Axios auto-pickup
-      });
-      next();
-    });
-  } else {
-    // Only check CSRF if session cookie is present
-    if (!req.cookies?.token) {
-      return next();
-    }
-    csrfProtection(req, res, next);
-  }
-});
-
-// ================================
-// CORS
+// CORS (must be before CSRF)
 // ================================
 const allowedOrigins = [
   "http://localhost:5173",
@@ -100,9 +63,49 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "X-CSRF-Token",
+    ],
   }),
 );
+
+// ================================
+// CSRF PROTECTION (CodeQL Fix)
+// ================================
+const csrfProtection = csrf({
+  cookie: {
+    key: "_csrf",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+  },
+});
+
+app.use((req, res, next) => {
+  // Bypass CSRF in development to avoid localhost cross-origin cookie blocking
+  if (process.env.NODE_ENV !== "production") {
+    return next();
+  }
+
+  // Exclude authentication endpoints from CSRF validation
+  // These endpoints handle initial authentication and shouldn't require CSRF tokens
+  if (req.path.startsWith("/api/auth/")) {
+    return next();
+  }
+
+  if (req.method === "GET") {
+    csrfProtection(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  } else {
+    // For non-auth POST/PUT/PATCH/DELETE requests, require CSRF validation
+    csrfProtection(req, res, next);
+  }
+});
 
 // Apply global rate limit after CORS
 app.use(globalLimiter);
@@ -143,16 +146,15 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/knowledge", knowledgeRoutes);
 
 // ================================
-// VECTOR STORE INIT
+// VECTOR STORE INIT (Non-blocking)
 // ================================
-try {
-  await initVectorStore();
-  console.log("✅ Vector store initialized");
-} catch (error) {
-  console.error("⚠️ Vector store initialization failed:", error.message);
-}
+// Initialize vector store in background to avoid blocking server startup
+initVectorStore()
+  .then(() => console.log("✅ Vector store initialized"))
+  .catch((error) => console.error("⚠️ Vector store initialization failed:", error.message));
 
 // ================================
 // START SERVER
@@ -172,6 +174,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+app.set("io", io);
 
 meetingSocket(io);
 
